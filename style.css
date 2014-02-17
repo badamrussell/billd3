@@ -1,0 +1,46 @@
+body, h1, h2, h3, p, a {
+	margin: 0;
+	padding: 0;
+	border: none;
+	text-decoration: none;
+	font-family: sans-serif;
+}
+
+
+.v-center:before {
+	content: "";
+	height: 100%;
+	display: inline;
+	vertical-align: middle;
+}
+
+.group:after {
+	content: "";
+	clear: both;
+	display: block;
+}
+
+.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}
+
+h1 {
+	font-size: 18px;
+}
+.vote-info {
+	/*width: 200px;*/
+	width: 240px;
+	padding: 20px;
+}
+
+.vote-area {
+	margin-left: 240px;
+}
+
+.bill-info {
+	min-height: 100px;
+}
