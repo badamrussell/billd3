@@ -41,7 +41,7 @@
 											gender: v.gender,
 											state: v.state,
 											x: 350,
-											y: -20,
+											y: 20,
 										}
 					allVoters.push(obj);
 					existVoters[id] = true;

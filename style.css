@@ -1,9 +1,10 @@
-body, h1, h2, h3, p, a {
+body, h1, h2, h3, h4, p, a {
 	margin: 0;
 	padding: 0;
 	border: none;
 	text-decoration: none;
 	font-family: sans-serif;
+	font-weight: normal;
 }
 
 
@@ -28,19 +29,98 @@ body, h1, h2, h3, p, a {
 	float: right;
 }
 
-h1 {
+h3.bill-title {
 	font-size: 18px;
+	color: #333;
+	text-align: center;
 }
+
 .vote-info {
 	/*width: 200px;*/
-	width: 240px;
-	padding: 20px;
+	/*width: 240px;*/
+	/*padding: 20px;*/
+}
+
+h4.vote-title {
+	text-align: center;
+	font-weight: bold;
 }
 
 .vote-area {
-	margin-left: 240px;
+	/*margin-left: 240px;*/
+}
+
+.vote-area > a {
+	/*display: block;*/
 }
 
 .bill-info {
-	min-height: 100px;
+	height: 60px;
+}
+
+body {
+	width: 700px;
+	margin: auto;
+	padding-top: 10px;
+	padding-bottom: 100px;
+}
+
+.voting {
+	text-align: center;
+}
+
+a {
+	color: #666;
+	display: block;
+	text-align: center;
+}
+.active {
+	color: #000;
+	font-weight: bold;
+}
+
+form {
+	background: #ccc;
+	padding: 10px;
+}
+.form-area {
+	width: 300px;
+	margin: auto;
+}
+
+label {
+	vertical-align: middle;
+	padding: 5px;
+	font-size: 14px;
+	font-weight: bold;
+	color: #666;
+}
+
+input {
+	height: 20px;
+	width: 150px;
+	font-weight: bold;
+	font-size: 20px;
+	border: 1px solid #ccc;
+	padding: 5px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+#btn-find {
+	display: inline-block;
+	font-size: 12px; 
+	background: #aaa;
+	border: 1px solid #aaa;
+	color: #fff;
+	height: 30px;
+	width: 50px;
+	vertical-align: middle;
+	outline: none;
+	cursor: pointer;
+}
+
+.find-action {
+	position:absolute;
+	padding: 8px 0 0 10px;
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My D3 tests</title>
+  <title>PoliticsD3</title>
   <link rel="stylesheet" href="style.css">
   <script type="text/javascript" src="d3.js"></script>
   <script type="text/javascript" src="sunlight_api.js"></script>
@@ -12,28 +12,26 @@
 	<header></header>
 
   <form>
-    <label for="find-text">bill id:</label>
+    <div class="form-area">
+    <label for="find-text">BILL ID</label>
     <input type="text" id="find-text" value="s1926-113"></input>
     <button id="btn-find">FIND</button>
-
+    <span class="find-action"></span>
+  </div>
     <!-- <button id="btn-next">RANDOM</button> -->
   </form>
 
 	<section class="keywords"></section>
 
-	<section class="bill-info"></section>
-
-  <section class="vote-info left">
-
+  <section class="bill-info">
+  	<h3 class="bill-title"></h3>
   </section>
   
 
 	<section id="vote-area"></section>
+    <section class="vote-info"></section>
 
-	<hr>
-  <div id="stuff">
-
-  </div>
+  
 </body>
 
 
