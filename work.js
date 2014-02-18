@@ -331,8 +331,7 @@
   $("#btn-find").on("click", function(event){
     event.preventDefault();
     var $textInput = $("#find-text");
-    var text = $textInput.attr("value");
-    
+    var text = $textInput.val();
     resetPage();
     request_bill(text)
   });
