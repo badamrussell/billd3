@@ -30,9 +30,12 @@ body, h1, h2, h3, h4, p, a {
 }
 
 h3.bill-title {
+	background: #fff;
+	padding: 5px;
 	font-size: 18px;
 	color: #333;
 	text-align: center;
+	height: 130px;
 }
 
 .vote-info {
@@ -55,7 +58,7 @@ h4.vote-title {
 }
 
 .bill-info {
-	height: 60px;
+	height: 80px;
 }
 
 body {
@@ -63,6 +66,7 @@ body {
 	margin: auto;
 	padding-top: 10px;
 	padding-bottom: 100px;
+	background: #222;
 }
 
 .voting {
@@ -74,6 +78,7 @@ a {
 	display: block;
 	text-align: center;
 }
+
 .active {
 	color: #000;
 	font-weight: bold;
@@ -83,6 +88,7 @@ form {
 	background: #ccc;
 	padding: 10px;
 }
+
 .form-area {
 	width: 320px;
 	margin: auto;
@@ -107,6 +113,10 @@ input {
 	vertical-align: middle;
 }
 
+#map-outline {
+	position: absolute;
+}
+
 #btn-find {
 	display: inline-block;
 	font-size: 12px; 
@@ -123,4 +133,20 @@ input {
 .find-action {
 	position:absolute;
 	padding: 8px 0 0 10px;
+}
+
+.legislator {
+	fill: purple;
+}
+
+.democrat {
+	fill: #3366FF;
+}
+
+.republican {
+	fill: red;
+}
+
+.independent {
+	fill: green;
 }

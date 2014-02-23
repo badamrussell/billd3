@@ -7,9 +7,9 @@
   var yeaColor = "#777";
   var nayColor = "#ccc";
   var elseColor = "#aaa";
-  var activeState = "";
   var currentCircle = 0;
-  var currentState = 0;
+  var currentState = -1;
+  var currentVoteIndex = 0;
   var currentVote;
 
   var $keywordArea = $(".keywords");
@@ -38,7 +38,6 @@
 
   var svgContainer = d3.select("#vote-area")
                     .append("svg")
-
                     .attr("width", width)
                     .attr("height", height);
 
@@ -72,10 +71,89 @@
                             .attr("font-size", function(d) { return d.size; } )
                             .attr("font-weight", "bold")
                             .attr("font-family", "sans-serif")
-                            .attr("fill", function(d) { return d.fill; });
-  var svgState = svgContainer.append("g");
+                            .attr("fill", function(d) { return d.fill; })
+                            .attr("stroke", function(d) { return d.fill })
+                            .attr("stroke-width", 0.50);
 
+  var svgOutline = svgContainer.append("g");   
+  var svgState = svgContainer.append("g");                      
   var circleGroup = svgContainer.append("g");
+  var navigationGroup = svgContainer.append("g");
+  var svgTitle = svgContainer.append("g");
+  // navigationGroup.attr("transform","translate(100,100)");
+
+  var votingTitle = svgTitle.selectAll("text")
+                            .data([1])
+                            .enter()
+                            .append("text")
+                            .attr("x", width/2)
+                            .attr("y", 70)
+                            .text("hello")
+                            .attr("font-size", "16px")
+                            .attr("font-weight", "bold")
+                            .attr("font-family", "sans-serif")
+                            .attr("text-anchor","middle")
+                            .attr("fill", "#111");
+
+  var directionArrows = [ {"path": "M40,0L20,0L0,30L20,60L40,60L20,30L40,0z", "x": 5, "y": 270, "step": -1, "active": false, "other": 0 },
+                          {"path": "M0,0L20,0L40,30L20,60L0,60L20,30L0,0z", "x": 665, "y": 270, "step": 1, "active": false, "other": 1 }
+                        ]
+  var updateNavigation = function() {
+    if (voteData.length <= 1) {
+      directionArrows[0].active = false;
+      directionArrows[1].active = false;
+    } else if (currentVoteIndex <= 0) {
+      directionArrows[0].active = false;
+      directionArrows[1].active = true;
+    } else if (currentVoteIndex >= voteData.length - 1) {
+      directionArrows[0].active = true;
+      directionArrows[1].active = false;
+    } else {
+      directionArrows[0].active = true;
+      directionArrows[1].active = true;
+    }
+
+    navigationGroup.selectAll("path")
+                    .attr("opacity",function(d) { 
+                                if (d.active){
+                                  return 1;
+                                } else {
+                                  return 0;
+                                }
+                              })
+  }
+
+  var nextArrow = navigationGroup.selectAll("path")
+                              .data(directionArrows)
+                              .enter()
+                              .append("path")
+                              .attr("d", function(d) { return d.path; })
+                              // .attr("d", "M0,0L20,0L40,30L20,60L0,60L20,30L0,0z")
+                              .attr("fill", "#ddd")
+                              .attr("stroke","#333")
+                              .attr("opacity", 0)
+                              .attr("transform",function(d){ return "translate("+d.x+","+d.y+") scale(.7,.7)"; })
+                              .on("click", function(d, i){
+                                if (d.active == false) { return false; }
+                                currentVoteIndex += d.step;
+
+                                if (currentVoteIndex <= 0) {
+                                  currentVoteIndex = 0;
+                                  d.active = false;
+                                } else if (currentVoteIndex >= (voteData.length - 1)) {
+                                  currentVoteIndex = voteData.length - 1;
+                                  d.active = false;
+                                }
+                                changeVote(currentVoteIndex);
+                              })
+                              .on("mouseover", function(d){
+                                if (d.active == false) { return false; }
+                                d3.select(this).attr("fill","#ffd700");
+                              })
+                              .on("mouseleave", function(d){
+                                if (d.active == false) { return false; }
+                                d3.select(this).attr("fill","#ddd");
+                              });
 
   var building = svgContainer.selectAll("image")
                             .data([1])
@@ -88,6 +166,8 @@
                             .attr("xlink:href", "images/building.png");
   
 
+ 
+   
   d3.json("states.json", function(d3data){
     stateData = d3data.stateInfo;
 
@@ -98,20 +178,34 @@
             .attr("fill", elseColor)
             .attr('d', function(d) { return d.path; })
             // .attr("stroke", "#eee")
-            .attr("transform","translate(160,160)scale(.4,.4)");
+            .attr("transform","translate(20,80)scale(.7,.7)")
+            .on("mouseover", function(d, i) {
+              currentState = i; 
+              // d3.select(this).attr("fill", "#ffd700");
+              changeState();
+            })
+            .on("mouseleave", function(d){
+              currentState = -1;
+              d3.select(this).attr("fill",getStateColor(d));
+            })
+            .on("click", function(d, i) {
+              currentState = i; 
+              changeState();
+            });
   });
 
-   
-
-  var stateText = svgContainer.append("text")
-                              .text("")
-                              .attr("x", width/2)
-                              .attr("y", 100)
-                              .attr("font-size", "30px")
-                              .attr("font-weight", "bold")
-                              .attr("font-family", "sans-serif")
-                              .attr("align", "center")
-                              .attr("fill", "#fff");
+   d3.xml("usaOutline.svg", function(d3data){
+    // console.log(">>>>",d3data);
+    // outlinePath = d3data.usaOutline.path;
+    pathData = $($(d3data).find("path")).attr("d")
+    // console.log(outlinePath)
+    svgOutline.append("path")
+            .attr('d', pathData)
+            .attr("fill", "rgba(0,0,0,0)")
+            .attr("stroke", "#555")
+            .attr("stroke-width", 2)
+            .attr("transform","translate(22,78)scale(.7,.7)");
+  });
 
   var force = d3.layout.force()
                 .alpha(0.8)
@@ -122,16 +216,6 @@
 
 
   
-
-  var colorIt = function(c) {
-    if (c == "R"){
-      return "red";
-    } else if(c == "D") {
-      return "#3366FF";
-    } else {
-      return "green";
-    }
-  }
 
   var getRadius = function(age) {
     return 0.2 * (age-15);
@@ -144,39 +228,44 @@
       .attr("cx", width/2)
       .attr("cy", height/2 )
       .attr("r", function(d) { return getRadius(d.age); })
-      .style("fill", function(d) { return colorIt(d.party); });
+      .classed("legislator", true)
+      .classed("democrat", function(d) { return d.party == "D"; })
+      .classed("republican", function(d) { return d.party == "R"; })
+      .classed("independent", function(d) { return d.party == "I"; });
 
     nodes.push(voters[currentCircle])
     currentCircle += 1;
 
-    if (currentCircle == voters.length) {
-      clearInterval(intervalSetup);
-
-      stateInterval = window.setInterval( changeState, 1500);
-    }
+    if (currentCircle == voters.length) { clearInterval(intervalSetup); }
 
     force.start();
   };
 
+  var getStateColor = function(d) {
+    if (currentVote == undefined) { return elseColor; };
+
+    var sVote = currentVote.states[d.abb];
+    var activeState;
+    if (currentState >= 0) { activeState = stateData[currentState].abb; }
+
+    if (d.abb == activeState) {
+      return "#ffd700";
+    } else if (sVote > 0) {
+      return yeaColor;
+    } else if (sVote < 0) {
+      return nayColor;
+    } else {
+      return elseColor;
+    }
+  }
+
+  var updateState = function() {
+    svgState.selectAll("path").attr("fill", function(d) { return getStateColor(d); });
+  }
+
   var changeState = function() {
-    activeState = stateData[currentState].abb;
-    // stateText.text(stateData[currentState].name);
-    currentState = (currentState+1) == stateData.length ? 0 : currentState + 1;
-
-    svgContainer.selectAll("path")
-                .attr("fill", function(d) {
-                  var sVote = currentVote.states[d.abb];
-                  if (d.abb == activeState) {
-                    return "#ffd700";
-                  } else if (sVote > 0) {
-                    return yeaColor;
-                  } else if (sVote < 0) {
-                    return nayColor;
-                  } else {
-                    return elseColor;
-                  }
-                });
-
+    if (currentVote == undefined) { return false; }
+    updateState();
     force.start();
   };
 
@@ -186,6 +275,9 @@
     for (i in mainPositions) {
       mainPositions[i].count = 0;
     }
+
+    var activeState;
+    if (currentState >= 0) { activeState = stateData[currentState].abb; }
 
     nodes.forEach(function(node) {
       var center = {}
@@ -253,10 +345,17 @@
     }
   };
 
-  var updateCurrentVote = function(vote_id){
-    console.log("CV",currentVote);
+  var changeVote = function(vote_id){
+    // console.log("CV",currentVote);
     currentVote = voteData[vote_id];
+    updateNavigation();
 
+    svgTitle.selectAll("text").text(currentVote.votes.question);
+    // votingTitle.selectAll("text").text(currentVote.votes.question);
+    // votingTitle
+    updateYeaNayText();
+    updateState();
+    force.start();
   }
 
   var update_page = function(skipSend){
@@ -266,16 +365,10 @@
 
     $billTitle.text(bill.official_title);
 
-    // $voteArea.empty();
-    for (var i=voteData.length-1; i >= 0; i--) {
-      var v = voteData[i].votes;
-      
-      $voteArea.append('<a class="" href="#" data-id=' + i + '>' + v.chamber + ' : ' + v.question + '</a>');
-    }
-    $($voteArea.find("a")[0]).addClass("active");
+
     currentCircle = 0;
     intervalSetup = window.setInterval( sendInLegislators, 20);
-    updateCurrentVote(0);
+    changeVote(0);
     updateYeaNayText();
   }
 
@@ -299,13 +392,6 @@
       }
       
     });
-    // Congress.getAll(function(congress_data){
-    //   data = congress_data;
-    //   bill = data.bills[0];
-    //   keywords = bill.keywords;
-
-    //   update_page()
-    // });
   }
 
   var resetPage = function() {
@@ -316,7 +402,7 @@
     while(nodes.length > 0) {
       nodes.pop();
     }
-    // nodes = [];
+
     svgState.selectAll("path")
             .attr("fill", elseColor);
 
@@ -336,20 +422,10 @@
     request_bill(text)
   });
 
-  $("#btn-next").on("click", function(event){
-    event.preventDefault();
-    console.log("click find");
-  });
-
-  $voteArea.on("click","a", function(event){
-    event.preventDefault();
-    var $target = $(event.currentTarget);
-    $voteArea.children().removeClass();
-    console.log($voteArea);
-    $target.addClass("active");
-    updateCurrentVote($target.data("id"));
-    updateYeaNayText();
-  });
+  // $("#btn-next").on("click", function(event){
+  //   event.preventDefault();
+  //   console.log("click find");
+  // });
 
   // request_bill("s1926-113");
 })()
